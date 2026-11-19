@@ -6,13 +6,14 @@
   "use strict";
 
   // ---------------------------------------------------------------------------
-  // CONFIG — fill in PASS_CONTRACT after deployment (see README).
+  // CONFIG — PASS_CONTRACT points at the deployed v2 contract.
   // ---------------------------------------------------------------------------
   var CONFIG = {
     REGISTRY: "0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F", // official Agent ID registry (BSC)
-    // >>> DEPLOYMENT: replace the zero address below with the deployed
-    // AgentHavenPass contract address (BSC mainnet, chain ID 56). <<<
-    PASS_CONTRACT: "0xf8118d518a228B704947eCf89C264B4F4F79aC5D",
+    // AgentHavenPassV2 (BSC mainnet, chain ID 56) — deployed 19 Nov 2026.
+    // First 1,111 claims free, then 0.00005 BNB per claim.
+    // v1 (all-free pilot): 0xf8118d518a228B704947eCf89C264B4F4F79aC5D.
+    PASS_CONTRACT: "0xFa4ad465FDff3b9b6d8cbd1bb31613a466aFfA0e",
     CHAIN_ID: 56,
     RPCS: [
       "https://bsc-dataseed.binance.org/",
@@ -25,7 +26,8 @@
     SEL_HANDLE_OF: "0xc50a1514",  // handleOf(address)
     SEL_CLAIM: "0x4e71d92d",      // claim()
     SEL_CLAIMED: "0xc884ef83",     // claimed(address) — verified via cast
-    SEL_TOTAL_MINTED: "0xa2309ff8" // totalMinted() — verified via cast
+    SEL_TOTAL_MINTED: "0xa2309ff8", // totalMinted() — verified via cast
+    SEL_CLAIM_PRICE: "0x15d655c9"   // claimPrice() (v2 only) — verified via cast
   };
 
   var ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -116,6 +118,39 @@
     return decodeUint(hex) > 0;
   }
 
+  // Read the current claim price (wei) from the Pass contract's claimPrice().
+  // v2 only: the v1 contract has no claimPrice(), so the call reverts there —
+  // the caller treats a failure as "price unknown" (null) and falls back to
+  // 0, which is the correct price on v1 until PASS_CONTRACT points at v2.
+  async function fetchClaimPrice() {
+    if (!isDeployed) return null;
+    try {
+      var hex = await ethCall(CONFIG.PASS_CONTRACT, CONFIG.SEL_CLAIM_PRICE);
+      return decodeUint(hex);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function formatPriceWei(wei) {
+    if (wei === 0) return "FREE (gas only)";
+    return (wei / 1e18).toFixed(5) + " BNB (+ gas)";
+  }
+
+  async function refreshClaimPrice() {
+    var priceLine = $("priceLine");
+    if (!isDeployed) {
+      priceLine.textContent = "Current claim price: — (claiming opens after deployment)";
+      return;
+    }
+    var price = await fetchClaimPrice();
+    if (price === null) {
+      priceLine.textContent = "Current claim price: unavailable — retrying…";
+      return;
+    }
+    priceLine.textContent = "Current claim price: " + formatPriceWei(price);
+  }
+
   // ---------------------------------------------------------------------------
   // Agent ID status check
   // ---------------------------------------------------------------------------
@@ -195,7 +230,7 @@
       claimBtn.textContent = "Connect wallet to claim";
     } else {
       claimBtn.disabled = false;
-      claimBtn.textContent = "Claim free Pass (" + shortAddr(connectedAccount) + ")";
+      claimBtn.textContent = "Claim Pass (" + shortAddr(connectedAccount) + ")";
     }
   }
 
@@ -265,14 +300,22 @@
           '<span class="ok">You already claimed your Pass ✓</span> — one per wallet.';
         return;
       }
-      // Single claim() call, value 0. The wallet shows the exact transaction
-      // for the user to confirm; nothing is signed without confirmation.
+      // Read the current claim price on-chain and send exactly that value
+      // (0 for the free tier, 0.00005 BNB after the first 1,111 claims).
+      // If the read fails (the v1 contract has no claimPrice, or the RPC is
+      // down), fall back to 0: on v1 that is the correct price, and on v2 a
+      // wrong value simply reverts on-chain — no funds are at risk, only gas.
+      var price = await fetchClaimPrice();
+      if (price === null) price = 0;
+      var valueHex = "0x" + price.toString(16);
+      // Single claim() call with the exact price. The wallet shows the exact
+      // transaction for the user to confirm; nothing is signed without confirmation.
       var txHash = await window.ethereum.request({
         method: "eth_sendTransaction",
         params: [{
           from: account,
           to: CONFIG.PASS_CONTRACT,
-          value: "0x0",
+          value: valueHex,
           data: CONFIG.SEL_CLAIM
         }]
       });
@@ -305,6 +348,7 @@
               esc(txHash) + '" target="_blank" rel="noopener">View on BscScan</a>. ' +
               "Your Pass shows your .ai name on-chain.";
             fetchMinted(); // refresh the live counter right away
+            refreshClaimPrice(); // the price may have flipped at the boundary
           } else {
             claimResult.innerHTML =
               '<span class="bad">Transaction reverted on-chain.</span> No Pass was minted. ' +
@@ -435,5 +479,6 @@
   renderDeployState();
   loadMints();
   fetchMinted();
-  setInterval(fetchMinted, 30000); // live counter refresh
+  refreshClaimPrice();
+  setInterval(function () { fetchMinted(); refreshClaimPrice(); }, 30000); // live counter + price refresh
 })();
