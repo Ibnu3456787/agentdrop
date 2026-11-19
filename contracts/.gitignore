@@ -1,0 +1,8 @@
+out/
+cache/
+broadcast/
+*.json
+!foundry.toml
+.env
+.env.*
+foundry.lock

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentHaven — Free Pass for Agent ID Holders</title>
+<meta name="description" content="AgentHaven is a free-claim hub for .ai Agent ID holders. Claim one free on-chain AgentHaven Pass (gas only) and browse live free mints on BNB Smart Chain.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="#">AGENTHAVEN</a>
+    <nav>
+      <a href="#check">Check ID</a>
+      <a href="#claim">Claim Pass</a>
+      <a href="#mints">Free Mints</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">BUILT FOR THE AGENT ID HACKATHON</p>
+    <h1>One free Pass for every Agent ID holder.</h1>
+    <p class="lede">AgentHaven is a free-claim hub for holders of a <strong>.ai Agent ID</strong>.
+      If your wallet holds an Agent ID, you can claim one <strong>AgentHaven Pass</strong> NFT —
+      free, except for gas. Your <strong>.ai name is embedded on-chain</strong> in the Pass itself.
+      No token. No fees. No promised returns.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="#claim">Claim your free Pass</a>
+      <a class="btn btn-ghost" href="#mints">Browse free mints</a>
+    </div>
+    <ul class="facts">
+      <li><strong>10,000</strong><span>max supply</span></li>
+      <li><strong>1</strong><span>per wallet</span></li>
+      <li><strong>0 BNB</strong><span>claim price (gas only)</span></li>
+      <li><strong>100%</strong><span>on-chain art &amp; metadata</span></li>
+    </ul>
+  </section>
+
+  <section id="check" class="card">
+    <h2>Check your Agent ID</h2>
+    <p class="muted">Paste any BSC address, or connect your wallet. We read the official Agent ID
+      registry on-chain — <code>balanceOf</code> and <code>handleOf</code> — through a public BSC RPC.
+      Nothing is stored, and we never ask for a seed phrase or private key.</p>
+    <div class="row">
+      <input id="addrInput" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+        placeholder="0x… (BSC address)">
+      <button id="checkBtn" class="btn btn-gold" type="button">Check</button>
+      <button id="connectBtn" class="btn btn-ghost" type="button">Connect wallet</button>
+    </div>
+    <div id="checkResult" class="result" aria-live="polite"></div>
+    <p class="tiny muted">Registry: <code id="registryAddr">0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F</code>
+      (<a href="https://bscscan.com/address/0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F" target="_blank" rel="noopener">BscScan</a>)</p>
+  </section>
+
+  <section id="claim" class="card">
+    <h2>Claim your AgentHaven Pass</h2>
+    <p class="muted">One Pass per wallet, free except gas. The Pass is an ERC-721 NFT with fully
+      on-chain art showing your .ai name and Pass number. Claiming sends a single
+      <code>claim()</code> transaction to the Pass contract — your wallet shows you exactly what
+      you are signing before you confirm. No approvals are involved.</p>
+    <div id="deployNote" class="notice"></div>
+    <div class="row">
+      <button id="claimBtn" class="btn btn-gold" type="button" disabled>Connect wallet to claim</button>
+    </div>
+    <div id="claimResult" class="result" aria-live="polite"></div>
+    <p class="tiny muted">Pass contract: <code id="passAddr">—</code>
+      <span id="passLinks"></span></p>
+  </section>
+
+  <section id="mints" class="card">
+    <h2>Live free mints</h2>
+    <p class="muted">Free-mint projects for Agent ID holders, loaded live from the public Colony index
+      (<a href="https://mints-bnb.pages.dev/projects.json" target="_blank" rel="noopener">projects.json</a>).
+      AgentHaven only lists them — always verify a contract on BscScan yourself before minting anything.</p>
+    <div class="row filters">
+      <button class="chip active" data-filter="free_live" type="button">Free live</button>
+      <button class="chip" data-filter="all" type="button">All</button>
+      <span id="mintsMeta" class="tiny muted"></span>
+      <button id="mintsRetry" class="btn btn-ghost small hidden" type="button">Retry</button>
+    </div>
+    <div id="mintsList" class="mints"></div>
+    <div id="mintsError" class="result hidden"></div>
+  </section>
+
+  <section class="card honesty">
+    <h2>Honest notes</h2>
+    <ul>
+      <li>The Pass claim is <strong>free except gas</strong>. The contract charges nothing and holds no funds.</li>
+      <li>There is <strong>no token</strong> and <strong>no promised return</strong>. The Pass is a collectible badge for Agent ID holders — nothing more.</li>
+      <li>AgentHaven is an <strong>independent community project</strong>, built for the Agent ID Hackathon. It is unaffiliated with Binance and SPACE ID.</li>
+      <li>The Pass contract is open-source and verified on BscScan. Its only owner powers are an emergency pause and ownership transfer — documented in the <a href="https://github.com/Ibnu3456787/agentdrop" target="_blank" rel="noopener">README</a>.</li>
+      <li>Never share your seed phrase or private key with any website, including this one — this site never asks for them.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p class="tiny muted">AgentHaven · MIT licensed · Contract source on
+      <a href="https://github.com/Ibnu3456787/agentdrop" target="_blank" rel="noopener">GitHub</a> ·
+      Built for the Agent ID Hackathon (Binance Wallet × BNB Chain).</p>
+  </footer>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
