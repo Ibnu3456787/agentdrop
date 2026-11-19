@@ -40,6 +40,15 @@
       <a class="btn btn-gold" href="#claim">Claim your free Pass</a>
       <a class="btn btn-ghost" href="#mints">Browse free mints</a>
     </div>
+    <div class="livebar" id="liveBar">
+      <div class="livebar-head">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span class="live-label">Live · Passes claimed</span>
+        <span id="mintedCount" class="live-count">…</span>
+      </div>
+      <div class="progress"><div id="mintedBar" class="progress-fill" style="width: 0%"></div></div>
+      <p class="tiny muted live-sub"><span id="mintedDetail">Loading the live count from BSC…</span> · <span id="mintedUpdated"></span></p>
+    </div>
     <ul class="facts">
       <li><strong>10,000</strong><span>max supply</span></li>
       <li><strong>1</strong><span>per wallet</span></li>

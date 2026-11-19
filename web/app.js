@@ -24,7 +24,8 @@
     SEL_BALANCE_OF: "0x70a08231", // balanceOf(address)
     SEL_HANDLE_OF: "0xc50a1514",  // handleOf(address)
     SEL_CLAIM: "0x4e71d92d",      // claim()
-    SEL_CLAIMED: "0xc884ef83"     // claimed(address) — verified via cast
+    SEL_CLAIMED: "0xc884ef83",     // claimed(address) — verified via cast
+    SEL_TOTAL_MINTED: "0xa2309ff8" // totalMinted() — verified via cast
   };
 
   var ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -303,6 +304,7 @@
               '<span class="ok">✓ Pass claimed!</span> — <a href="https://bscscan.com/tx/' +
               esc(txHash) + '" target="_blank" rel="noopener">View on BscScan</a>. ' +
               "Your Pass shows your .ai name on-chain.";
+            fetchMinted(); // refresh the live counter right away
           } else {
             claimResult.innerHTML =
               '<span class="bad">Transaction reverted on-chain.</span> No Pass was minted. ' +
@@ -314,6 +316,37 @@
       } catch (e) { /* keep polling */ }
     }
     claimResult.innerHTML += "<br><span class=\"pending\">Still pending after ~90s — check the BscScan link above.</span>";
+  }
+
+  // ---------------------------------------------------------------------------
+  // Live minted counter (totalMinted, re-read from BSC every 30 seconds)
+  // ---------------------------------------------------------------------------
+  var MAX_SUPPLY = 10000; // contract constant (AgentHavenPass.MAX_SUPPLY)
+  var mintedCountEl = $("mintedCount");
+  var mintedBarEl = $("mintedBar");
+  var mintedDetailEl = $("mintedDetail");
+  var mintedUpdatedEl = $("mintedUpdated");
+
+  function fmt(n) { return n.toLocaleString("en-US"); }
+
+  async function fetchMinted() {
+    if (!isDeployed) {
+      mintedDetailEl.textContent = "Claiming opens after deployment.";
+      return;
+    }
+    try {
+      var hex = await ethCall(CONFIG.PASS_CONTRACT, CONFIG.SEL_TOTAL_MINTED);
+      var minted = decodeUint(hex);
+      var pct = Math.min(100, (minted / MAX_SUPPLY) * 100);
+      mintedCountEl.textContent = fmt(minted) + " / " + fmt(MAX_SUPPLY);
+      mintedBarEl.style.width = pct.toFixed(2) + "%";
+      mintedDetailEl.textContent =
+        fmt(MAX_SUPPLY - minted) + " remaining · " + pct.toFixed(1) + "% claimed";
+      mintedUpdatedEl.textContent = "updated " +
+        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    } catch (e) {
+      mintedDetailEl.textContent = "Live count temporarily unreachable — retrying…";
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -401,4 +434,6 @@
   // ---------------------------------------------------------------------------
   renderDeployState();
   loadMints();
+  fetchMinted();
+  setInterval(fetchMinted, 30000); // live counter refresh
 })();
