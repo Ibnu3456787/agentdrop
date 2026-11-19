@@ -12,7 +12,7 @@
     REGISTRY: "0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F", // official Agent ID registry (BSC)
     // >>> DEPLOYMENT: replace the zero address below with the deployed
     // AgentHavenPass contract address (BSC mainnet, chain ID 56). <<<
-    PASS_CONTRACT: "0x0000000000000000000000000000000000000000",
+    PASS_CONTRACT: "0xf8118d518a228B704947eCf89C264B4F4F79aC5D",
     CHAIN_ID: 56,
     RPCS: [
       "https://bsc-dataseed.binance.org/",
