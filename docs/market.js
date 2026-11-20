@@ -13,7 +13,7 @@
   var CONFIG = {
     // AgentHavenMarket (BSC mainnet, chain ID 56) — NOT DEPLOYED YET.
     // Deploy with contracts/script/DeployMarket.s.sol, then set this.
-    MARKET_CONTRACT: "0x0000000000000000000000000000000000000000",
+    MARKET_CONTRACT: "0xd7cab4f410dF1afce3eE84F61D0874e1eC009915",
     PASS_V1: "0xf8118d518a228B704947eCf89C264B4F4F79aC5D", // all-free pilot drop
     PASS_V2: "0xFa4ad465FDff3b9b6d8cbd1bb31613a466aFfA0e", // 1,111 free, then 0.00005 BNB
     USDT: "0x55d398326f99059fF775485246999027B3197955", // BSC USDT (BEP-20, 18 decimals)
