@@ -170,3 +170,51 @@ footer { padding: 8px 0 40px; text-align: center; }
   .topbar nav a { margin-left: 12px; font-size: 13px; }
   .card { padding: 18px; }
 }
+
+/* --- Market page --- */
+.topbar nav a.active { color: var(--gold); font-weight: 700; }
+
+input[type="number"],
+select {
+  background: var(--bg2); border: 1px solid var(--line); border-radius: 10px;
+  color: var(--text); font-size: 15px; padding: 11px 14px; outline: none;
+}
+input[type="number"]:focus,
+select:focus { border-color: var(--gold); }
+input[type="number"] { flex: 1 1 140px; min-width: 0; }
+select { cursor: pointer; }
+
+.listing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+.listing-grid:empty { display: none; }
+.listing-card {
+  border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--bg2);
+}
+.listing-card h3 { margin: 0 0 4px; font-size: 16px; }
+.listing-img {
+  width: 100%; height: auto; display: block; border-radius: 10px; margin-bottom: 10px;
+  border: 1px solid var(--line);
+}
+.listing-img-empty {
+  aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
+  background: var(--bg); color: var(--gold); font-weight: 800; letter-spacing: 4px; font-size: 13px;
+}
+.listing-meta {
+  font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap;
+  align-items: center; margin-bottom: 8px;
+}
+.listing-price { font-size: 20px; font-weight: 800; color: var(--gold); margin: 6px 0 10px; }
+.listing-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.list-form input[type="text"] { flex: 1 1 120px; }
+.list-form select { flex: 0 0 auto; }
+
+.btn-danger {
+  background: transparent; color: var(--red); border: 1px solid var(--red);
+}
+.btn-danger:hover { background: rgba(229, 72, 77, 0.12); }
+
+details.manual { margin-top: 16px; }
+details.manual summary { cursor: pointer; color: var(--gold); font-size: 14px; }
+
+@media (max-width: 640px) {
+  .listing-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgentHaven Market — Buy &amp; Sell AgentHaven Passes</title>
+<meta name="description" content="The AgentHaven marketplace: buy and sell AgentHaven Pass NFTs (v1 + v2) in BNB or USDT on BNB Smart Chain. 2.5% marketplace fee. Listings are escrowed on-chain.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ibnu3456787.github.io/agentdrop/market.html">
+<meta property="og:title" content="AgentHaven Market — Buy &amp; Sell AgentHaven Passes">
+<meta property="og:description" content="Buy and sell AgentHaven Pass NFTs (v1 + v2) in BNB or USDT. 2.5% fee. Listings escrowed on-chain.">
+<meta property="og:image" content="https://ibnu3456787.github.io/agentdrop/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">AGENTHAVEN</a>
+    <nav>
+      <a href="index.html#check">Check ID</a>
+      <a href="index.html#claim">Claim Pass</a>
+      <a href="index.html#mints">Free Mints</a>
+      <a href="market.html" class="active">Market</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">AGENTHAVEN MARKET</p>
+    <h1>Buy &amp; sell AgentHaven Passes.</h1>
+    <p class="lede">List your Pass (v1 or v2) for <strong>BNB or USDT</strong>, or buy one from
+      another holder. Listed Passes are <strong>escrowed on-chain</strong> in the market
+      contract, so a sold Pass is always delivered. Marketplace fee is
+      <strong>2.5%</strong> of the sale price (paid by the seller). Listing is free (gas only).</p>
+    <div id="deployNote" class="notice"></div>
+  </section>
+
+  <section id="browse" class="card">
+    <h2>Listings</h2>
+    <p class="muted">Live from the market contract on BSC. Prices are exact — what you see is
+      what you pay (plus gas).</p>
+    <div class="row filters">
+      <select id="filterCollection" aria-label="Filter by collection">
+        <option value="all">All collections</option>
+        <option value="v1">Pass v1</option>
+        <option value="v2">Pass v2</option>
+      </select>
+      <select id="filterCurrency" aria-label="Filter by currency">
+        <option value="all">BNB &amp; USDT</option>
+        <option value="BNB">BNB only</option>
+        <option value="USDT">USDT only</option>
+      </select>
+      <select id="sortOrder" aria-label="Sort listings">
+        <option value="price-asc">Price: low to high</option>
+        <option value="price-desc">Price: high to low</option>
+        <option value="newest">Newest first</option>
+      </select>
+      <span id="listingsMeta" class="tiny muted"></span>
+      <button id="refreshBtn" class="btn btn-ghost small" type="button">Refresh</button>
+    </div>
+    <div id="listingsGrid" class="listing-grid"></div>
+    <div id="buyResult" class="result" aria-live="polite"></div>
+    <p class="tiny muted">Market contract: <code id="marketAddr">—</code>
+      <span id="marketLinks"></span> · Fee: <span id="feeLine">—</span></p>
+  </section>
+
+  <section id="sell" class="card">
+    <h2>Sell your Pass</h2>
+    <p class="muted">Connect your wallet and we will find your AgentHaven Passes on-chain
+      (v1 + v2). Set a price in BNB or USDT and list. Your Pass is escrowed in the
+      market contract while listed — you can cancel anytime and it comes straight back.
+      Listing only asks for a <strong>single-token approval</strong> for the Pass you list,
+      never a blanket approval for your whole wallet.</p>
+    <div class="row">
+      <button id="connectBtn" class="btn btn-gold" type="button">Connect wallet</button>
+      <button id="findBtn" class="btn btn-ghost" type="button" disabled>Find my Passes</button>
+    </div>
+    <div id="myPasses" class="listing-grid"></div>
+    <div id="sellResult" class="result" aria-live="polite"></div>
+    <details class="manual">
+      <summary>Can't find your Pass? Enter its token ID manually.</summary>
+      <div class="row">
+        <select id="manualCollection" aria-label="Collection">
+          <option value="v1">Pass v1</option>
+          <option value="v2">Pass v2</option>
+        </select>
+        <input id="manualTokenId" type="number" min="1" step="1" placeholder="Token ID (e.g. 14)">
+        <button id="manualBtn" class="btn btn-ghost" type="button">Verify ownership</button>
+      </div>
+      <div id="manualResult" class="result" aria-live="polite"></div>
+    </details>
+  </section>
+
+  <section id="myListings" class="card">
+    <h2>My listings</h2>
+    <p class="muted">Your active listings. Cancelling returns the Pass to your wallet immediately
+      (gas only).</p>
+    <div id="myListingsGrid" class="listing-grid"></div>
+    <div id="cancelResult" class="result" aria-live="polite"></div>
+  </section>
+
+  <section class="card honesty">
+    <h2>Honest notes</h2>
+    <ul>
+      <li>Listed Passes are <strong>escrowed in the market contract</strong> — the seller cannot
+        sell the same Pass twice, and a buyer always receives the Pass they paid for.</li>
+      <li>The marketplace fee is <strong>2.5%</strong> of the sale price, taken from the seller's
+        proceeds. The fee can be changed by the contract owner, but it is hard-capped at
+        <strong>10%</strong> in the contract and can never go above that.</li>
+      <li><strong>USDT buys are two steps:</strong> first approve exactly the listed USDT amount
+        (no unlimited approvals), then buy. Your wallet shows you both transactions before you
+        confirm them.</li>
+      <li><strong>BNB buys are one step:</strong> you send exactly the listed price. Overpaying
+        or underpaying reverts on-chain, so no excess BNB can be locked in.</li>
+      <li>The market contract is open-source and verified on BscScan. Its only owner powers are
+        changing the fee (capped at 10%), returning Passes or tokens sent to it by mistake, and
+        ownership transfer — documented in the
+        <a href="https://github.com/Ibnu3456787/agentdrop" target="_blank" rel="noopener">README</a>.
+        The owner cannot move escrowed listed Passes or change listing prices.</li>
+      <li>Never share your seed phrase or private key with any website, including this one — this site never asks for them.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p class="tiny muted">AgentHaven · MIT licensed · Contract source on
+      <a href="https://github.com/Ibnu3456787/agentdrop" target="_blank" rel="noopener">GitHub</a> ·
+      Built for the Agent ID Hackathon (Binance Wallet × BNB Chain).</p>
+  </footer>
+</main>
+
+<script src="market.js"></script>
+</body>
+</html>
